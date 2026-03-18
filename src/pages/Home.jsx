@@ -1,4 +1,4 @@
-import { Github, Linkedin, Music2, ExternalLink } from 'lucide-react'
+import { Github, Linkedin, Music2 } from 'lucide-react'
 import ProjectCard from '../components/ProjectCard'
 import LinkCard from '../components/LinkCard'
 
