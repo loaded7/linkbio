@@ -20,16 +20,23 @@ export default function Dashboard() {
   }
 
   const loadClicks = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/api/clicks')
-      const data = await response.json()
+  setLoading(true)
+  try {
+    const response = await fetch('/api/clicks')
+    const data = await response.json()
+    
+    // Garante que data é um objeto válido
+    if (typeof data === 'object' && data !== null) {
       setClicks(data)
-    } catch (error) {
-      console.error('Erro ao carregar cliques:', error)
+    } else {
+      setClicks({})
     }
-    setLoading(false)
+  } catch (error) {
+    console.error('Erro ao carregar cliques:', error)
+    setClicks({})
   }
+  setLoading(false)
+}
 
   useEffect(() => {
     if (authenticated) {
