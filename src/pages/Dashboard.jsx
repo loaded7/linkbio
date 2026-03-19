@@ -5,9 +5,8 @@ export default function Dashboard() {
   const [password, setPassword] = useState('')
   const [authenticated, setAuthenticated] = useState(false)
   const [clicks, setClicks] = useState({})
-  const [loading, setLoading] = useState(false)
 
-  const correctPassword = 'thomas2026' // Muda isso pra uma senha forte!
+  const correctPassword = 'thomas2026'
 
   const handleLogin = () => {
     if (password === correctPassword) {
@@ -19,29 +18,22 @@ export default function Dashboard() {
     }
   }
 
-  const loadClicks = async () => {
-  setLoading(true)
-  try {
-    const response = await fetch('/api/clicks')
-    const data = await response.json()
-    
-    // Garante que data é um objeto válido
-    if (typeof data === 'object' && data !== null) {
-      setClicks(data)
-    } else {
-      setClicks({})
+  const loadClicks = () => {
+    // Busca os cliques do localStorage
+    const storedClicks = localStorage.getItem('linkbio_clicks')
+    if (storedClicks) {
+      try {
+        setClicks(JSON.parse(storedClicks))
+      } catch (e) {
+        setClicks({})
+      }
     }
-  } catch (error) {
-    console.error('Erro ao carregar cliques:', error)
-    setClicks({})
   }
-  setLoading(false)
-}
 
   useEffect(() => {
     if (authenticated) {
       loadClicks()
-      const interval = setInterval(loadClicks, 5000) // Atualiza a cada 5s
+      const interval = setInterval(loadClicks, 2000)
       return () => clearInterval(interval)
     }
   }, [authenticated])
@@ -124,7 +116,6 @@ export default function Dashboard() {
     }}>
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         
-        {/* HEADER */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
           <h1 style={{ fontSize: '28px', fontWeight: '700' }}>Analytics 📊</h1>
           <button
@@ -143,7 +134,6 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* TOTAL CLIQUES */}
         <div style={{
           background: '#111111',
           border: '1px solid #2a2a2a',
@@ -158,7 +148,6 @@ export default function Dashboard() {
           </h2>
         </div>
 
-        {/* GRÁFICO */}
         {chartData.length > 0 ? (
           <div style={{
             background: '#111111',
@@ -182,10 +171,9 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
         ) : (
-          <p style={{ color: '#888880', textAlign: 'center' }}>Nenhum clique registrado ainda</p>
+          <p style={{ color: '#888880', textAlign: 'center' }}>Clique nos links pra ver os dados aqui!</p>
         )}
 
-        {/* LISTA DETALHADA */}
         <div style={{
           background: '#111111',
           border: '1px solid #2a2a2a',
@@ -193,27 +181,31 @@ export default function Dashboard() {
           padding: '24px'
         }}>
           <h3 style={{ marginTop: '0', marginBottom: '16px' }}>Detalhes por Link</h3>
-          {Object.entries(clicks).map(([linkName, count]) => (
-            <div key={linkName} style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '12px 0',
-              borderBottom: '1px solid #2a2a2a'
-            }}>
-              <span style={{ color: '#f0ece4' }}>{linkName}</span>
-              <span style={{ 
-                background: '#c9a84c22', 
-                color: '#c9a84c',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                fontWeight: '600',
-                fontSize: '14px'
+          {Object.entries(clicks).length > 0 ? (
+            Object.entries(clicks).map(([linkName, count]) => (
+              <div key={linkName} style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '12px 0',
+                borderBottom: '1px solid #2a2a2a'
               }}>
-                {count} cliques
-              </span>
-            </div>
-          ))}
+                <span style={{ color: '#f0ece4' }}>{linkName}</span>
+                <span style={{ 
+                  background: '#c9a84c22', 
+                  color: '#c9a84c',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontWeight: '600',
+                  fontSize: '14px'
+                }}>
+                  {count} cliques
+                </span>
+              </div>
+            ))
+          ) : (
+            <p style={{ color: '#888880' }}>Nenhum clique registrado ainda</p>
+          )}
         </div>
 
       </div>

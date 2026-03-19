@@ -7,19 +7,12 @@ export default function ProjectCard({ name, desc, stack, github, live, surface, 
   const tx = text || '#f0ece4'
   const td = textDim || '#888880'
 
-  const handleLinkClick = async (linkName, url) => {
-    try {
-      await fetch('/api/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          linkName: `${name} - ${linkName}`,
-          url: url
-        })
-      })
-    } catch (error) {
-      console.error('Erro ao registrar clique:', error)
-    }
+  const handleLinkClick = (linkType, url) => {
+    // Registra o clique no localStorage
+    const clicks = JSON.parse(localStorage.getItem('linkbio_clicks') || '{}')
+    const key = `${name} - ${linkType}`
+    clicks[key] = (clicks[key] || 0) + 1
+    localStorage.setItem('linkbio_clicks', JSON.stringify(clicks))
   }
 
   return (

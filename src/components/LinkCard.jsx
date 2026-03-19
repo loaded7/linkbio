@@ -5,24 +5,14 @@ export default function LinkCard({ icon, label, url, surface, border, text }) {
   const bd = border || '#2a2a2a'
   const tx = text || '#f0ece4'
 
-  const handleClick = async () => {
-    try {
-      // Registra o clique no Redis
-      await fetch('/api/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          linkName: label,
-          url: url
-        })
-      })
-      
-      // Depois redireciona pro link
-      window.open(url, '_blank')
-    } catch (error) {
-      console.error('Erro ao registrar clique:', error)
-      window.open(url, '_blank')
-    }
+  const handleClick = () => {
+    // Registra o clique no localStorage
+    const clicks = JSON.parse(localStorage.getItem('linkbio_clicks') || '{}')
+    clicks[label] = (clicks[label] || 0) + 1
+    localStorage.setItem('linkbio_clicks', JSON.stringify(clicks))
+    
+    // Abre o link
+    window.open(url, '_blank')
   }
 
   return (
