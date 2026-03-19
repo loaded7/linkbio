@@ -8,15 +8,42 @@ export default function Dashboard() {
 
   const correctPassword = 'thomas2026'
 
-  const handleLogin = () => {
-    if (password === correctPassword) {
+  const handleLogin = async () => {
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    })
+    
+    const data = await response.json()
+    
+    if (data.success) {
       setAuthenticated(true)
       loadClicks()
     } else {
       alert('Senha incorreta!')
       setPassword('')
     }
+  } catch (error) {
+    console.error('Erro:', error)
+    alert('Erro ao autenticar')
   }
+}
+    
+    const data = await response.json()
+    
+    if (data.success) {
+      setAuthenticated(true)
+      loadClicks()
+    } else {
+      alert('Senha incorreta!')
+      setPassword('')
+    }
+  } catch (error) {
+    alert('Erro ao autenticar')
+  }
+}
 
   const loadClicks = () => {
     // Busca os cliques do localStorage
